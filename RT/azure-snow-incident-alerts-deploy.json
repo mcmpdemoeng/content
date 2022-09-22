@@ -1,0 +1,313 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+        "_generator": {
+            "name": "bicep",
+            "version": "0.5.6.12127",
+            "templateHash": "4232340575241655894"
+        }
+    },
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Specifies region of all resources."
+            }
+        },
+        "appNameSuffix": {
+            "type": "string",
+            "defaultValue": "[uniqueString(resourceGroup().id)]",
+            "metadata": {
+                "description": "Suffix for function app, storage account, and key vault names."
+            }
+        },
+            "snowUser": {
+                "type": "string",
+                "defaultValue": "Admin",
+                "metadata": {
+                    "description": "Your snow instance username"
+                }
+            },
+            "snowPass": {
+                "type": "string",
+                "defaultValue": "password",
+                "metadata": {
+                    "description": "Your snow instance password"
+                }
+            },
+			    "snowIncidentUrl": {
+                "type": "string",
+                "defaultValue": "Admin",
+                "metadata": {
+                    "description": "Your snow instance URL"
+                }
+            }
+    },
+    "variables": {
+		"alertName" : "RT High CPU Alert",
+		"AGName" : "ActionGroupRT",
+		"kubernetesClusterName": "petstorAKSCluster",
+		"keyVaultSku": "Standard",
+		"storageSku" : "Standard_LRS",
+        "functionAppName": "[format('rt-{0}', parameters('appNameSuffix'))]",
+        "appServicePlanName": "FunctionPlan",
+        "appInsightsName": "AppInsights",
+        "storageAccountName": "[format('fnstor{0}', replace(parameters('appNameSuffix'), '-', ''))]",
+        "functionNameComputed": "PostSnowIncident",
+        "functionRuntime": "dotnet",
+        "keyVaultName": "[format('kv{0}', replace(parameters('appNameSuffix'), '-', ''))]",
+        "functionAppKeySecretName": "FunctionAppHostKey"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-04-01",
+            "name": "[variables('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[variables('storageSku')]"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Insights/components",
+            "apiVersion": "2020-02-02",
+            "name": "[variables('appInsightsName')]",
+            "location": "[parameters('location')]",
+            "kind": "web",
+            "properties": {
+                "Application_Type": "web",
+                "publicNetworkAccessForIngestion": "Enabled",
+                "publicNetworkAccessForQuery": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2020-12-01",
+            "name": "[variables('appServicePlanName')]",
+            "location": "[parameters('location')]",
+            "kind": "functionapp",
+            "sku": {
+                "name": "Y1"
+            },
+            "properties": {}
+        },
+		        {
+            "type": "microsoft.insights/actionGroups",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('AGName')]",
+            "location": "Global",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/functions', variables('functionAppName'), variables('functionNameComputed'))]"
+            ],
+            "properties": {
+                "groupShortName": "AGRT",
+                "enabled": true,
+                "emailReceivers": [],
+                "smsReceivers": [],
+                "webhookReceivers": [],
+                "eventHubReceivers": [],
+                "itsmReceivers": [],
+                "azureAppPushReceivers": [],
+                "automationRunbookReceivers": [],
+                "voiceReceivers": [],
+                "logicAppReceivers": [],
+                "azureFunctionReceivers": [
+                    {
+                        "name": "snowincident",
+                        "functionAppResourceId": "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
+                        "functionName": "[variables('functionNameComputed')]",
+                        "httpTriggerUrl": "https://templatefunctionappsnow.azurewebsites.net/api/incidentpostfunction?code=2JjfAgVxDfagXJGDsrA122U0Gt3Aeo5bGlDxC5Vgmi_2AzFuPKe3KA==",
+                        "useCommonAlertSchema": true
+                    }
+                ],
+                "armRoleReceivers": []
+            }
+        },
+		        {
+            "type": "microsoft.insights/metricAlerts",
+            "apiVersion": "2018-03-01",
+            "name": "[variables('alertName')]",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('microsoft.insights/actionGroups', variables('AGName'))]"
+            ],
+            "properties": {
+                "description": "CPU over 5%",
+                "severity": 2,
+                "enabled": true,
+                "scopes": [
+                    "[resourceId('Microsoft.ContainerService/managedClusters', variables('kubernetesClusterName') )]"
+                ],
+                "evaluationFrequency": "PT1M",
+                "windowSize": "PT5M",
+                "criteria": {
+                    "allOf": [
+                        {
+                            "threshold": 5,
+                            "name": "Metric1",
+                            "metricNamespace": "Microsoft.ContainerService/managedClusters",
+                            "metricName": "node_cpu_usage_percentage",
+                            "operator": "GreaterThan",
+                            "timeAggregation": "Average",
+                            "criterionType": "StaticThresholdCriterion"
+                        }
+                    ],
+                    "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+                },
+                "autoMitigate": true,
+                "targetResourceType": "Microsoft.ContainerService/managedClusters",
+                "targetResourceRegion": "[parameters('location')]",
+                "actions": [
+                    {
+                        "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('AGName'))]",
+                        "webHookProperties": {}
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2020-12-01",
+            "name": "[variables('functionAppName')]",
+            "location": "[parameters('location')]",
+            "kind": "functionapp",
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName'))).InstrumentationKey]"
+                        },
+                        {
+                            "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                            "value": "[format('InstrumentationKey={0}', reference(resourceId('Microsoft.Insights/components', variables('appInsightsName'))).InstrumentationKey)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "[variables('functionRuntime')]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~3"
+                        },
+                        {
+                            "name": "SNOW_USER",
+                            "value": "[parameters('snowUser')]"
+                        },
+                        {
+                            "name": "SNOW_PASS",
+                            "value": "[parameters('snowPass')]"
+                        },
+                        {
+                            "name": "SNOW_INCIDENT_URL",
+                            "value": "[parameters('snowIncidentUrl')]"
+                        }
+                    ]
+                },
+                "httpsOnly": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]",
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/functions",
+            "apiVersion": "2020-12-01",
+            "name": "[format('{0}/{1}', variables('functionAppName'), variables('functionNameComputed'))]",
+            "properties": {
+                "config": {
+                    "disabled": false,
+                    "bindings": [
+                        {
+                            "name": "req",
+                            "type": "httpTrigger",
+                            "direction": "in",
+                            "authLevel": "function",
+                            "methods": [
+                                "get"
+                            ]
+                        },
+                        {
+                            "name": "$return",
+                            "type": "http",
+                            "direction": "out"
+                        }
+                    ]
+                },
+                "files": {
+                    "run.csx": "#r \"Newtonsoft.Json\"\n\nusing System.Net;\nusing System.Net.Http;\nusing System;\nusing Microsoft.AspNetCore.Mvc;\nusing Microsoft.Extensions.Primitives;\nusing Newtonsoft.Json;\n\n\npublic static async Task<IActionResult> Run(HttpRequest req, ILogger log)\n{\n    log.LogInformation(\"C# HTTP trigger function processed a request.\");\n\n    string name = req.Query[\"name\"];\n    string snow_username = Environment.GetEnvironmentVariable(\"SNOW_USER\");\n    string snow_passoword = Environment.GetEnvironmentVariable(\"SNOW_PASS\");\n    string snow_incident_url = Environment.GetEnvironmentVariable(\"SNOW_INCIDENT_URL\");\n\n    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();\n    dynamic data = JsonConvert.DeserializeObject(requestBody);\n    \n    dynamic description = data.data.essentials;\n    string alertId = description.alertId;\n    string short_description = description.description;\n\n    string stringDescription = JsonConvert.SerializeObject(description,  Formatting.Indented);\n\n    HttpClient client = new HttpClient();\n    Dictionary<string, string> payloadData = new Dictionary<string, string>();\n    payloadData.Add(\"description\", stringDescription);\n    payloadData.Add(\"short_description\", short_description);\n    payloadData.Add(\"urgency\", \"1\" );\n    payloadData.Add(\"severity\", \"1\" );\n    payloadData.Add(\"priority\", \"1\");\n    payloadData.Add(\"impact\", \"1\");\n    \n    List<string> splitAlertId = alertId.Split(\"/\").ToList();\n    alertId = splitAlertId[6].ToString();\n    payloadData.Add(\"number\", alertId);\n\n    string stringData = JsonConvert.SerializeObject(payloadData, Formatting.Indented);\n    log.LogInformation(stringData);\n    HttpContent content = new StringContent(stringData, System.Text.Encoding.UTF8, \"application/json\");\n    string authCreds = String.Format(\"{0}:{1}\", snow_username, snow_passoword);\n    var byteArray = System.Text.Encoding.ASCII.GetBytes(authCreds);\n    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(\"Basic\", Convert.ToBase64String(byteArray));\n\n    var res = await client.PostAsync(snow_incident_url, content);\n    \n    string responseMessage = \"Incident Created\";\n\n            return new OkObjectResult(responseMessage);\n}"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('keyVaultName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "tenantId": "[subscription().tenantId]",
+                "sku": {
+                    "family": "A",
+                    "name": "[variables('keyVaultSku')]"
+                },
+                "accessPolicies": []
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2019-09-01",
+            "name": "[format('{0}/{1}', variables('keyVaultName'), variables('functionAppKeySecretName'))]",
+            "properties": {
+                "value": "[listKeys(format('{0}/host/default', resourceId('Microsoft.Web/sites', variables('functionAppName'))), '2020-12-01').functionKeys.default]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            ]
+        }
+    ],
+    "outputs": {
+        "functionAppHostName": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName'))).defaultHostName]"
+        },
+        "functionName": {
+            "type": "string",
+            "value": "[variables('functionNameComputed')]"
+        }
+    }
+}
