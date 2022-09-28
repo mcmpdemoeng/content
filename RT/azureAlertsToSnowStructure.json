@@ -1,0 +1,154 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+        "_generator": {
+            "name": "bicep",
+            "version": "0.5.6.12127",
+            "templateHash": "4232340575241655894"
+        }
+    },
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Specifies region of all resources."
+            }
+        },
+            
+			    "snowScriptUrl": {
+                "type": "string",
+                "defaultValue": "Admin",
+                "metadata": {
+                    "description": "Your snow instance URL"
+                }
+            }
+    },
+    "variables": {
+		"alertName" : "RT High CPU Alert",
+        "healthAlertName" : "RTHealth",
+		"AGName" : "ActionGroupRT",
+		"kubernetesClusterName": "petstorAKSCluster",
+		"keyVaultSku": "Standard",
+		"storageSku" : "Standard_LRS",
+        "appServicePlanName": "FunctionPlan",
+        "appInsightsName": "AppInsights",
+        "functionNameComputed": "PostSnowIncident",
+        "functionRuntime": "dotnet",
+        "functionAppKeySecretName": "FunctionAppHostKey"
+    },
+    "resources": [
+        
+        {
+            "type": "microsoft.insights/activityLogAlerts",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('healthAlertName')]",
+            "location": "Global",
+			"dependsOn": [
+                "[resourceId('microsoft.insights/actionGroups', variables('AGName'))]"
+            ],
+            "properties": {
+                "scopes": [
+                    "/subscriptions/149f0952-6f3d-48ba-9e98-57011575cbbd"
+                ],
+                "condition": {
+                    "allOf": [
+                        {
+                            "field": "category",
+                            "equals": "ServiceHealth"
+                        }
+                    ]
+                },
+                "actions": {
+                    "actionGroups": [
+                        {
+                            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('AGName'))]",
+                            "webhookProperties": {}
+                        }
+                    ]
+                },
+                "enabled": true
+            }
+        },
+
+
+        {
+            "type": "microsoft.insights/actionGroups",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('AGName')]",
+            "location": "Global",
+            "properties": {
+                "groupShortName": "snowincident",
+                "enabled": true,
+                "emailReceivers": [],
+                "smsReceivers": [],
+                "webhookReceivers": [
+                    {
+                        "name": "postincident",
+                        "serviceUri": "[parameters('snowScriptUrl')]",
+                        "useCommonAlertSchema": true,
+                        "useAadAuth": false
+                    }
+                ],
+                "eventHubReceivers": [],
+                "itsmReceivers": [],
+                "azureAppPushReceivers": [],
+                "automationRunbookReceivers": [],
+                "voiceReceivers": [],
+                "logicAppReceivers": [],
+                "azureFunctionReceivers": [],
+                "armRoleReceivers": []
+            }
+        },
+		{
+            "type": "microsoft.insights/metricAlerts",
+            "apiVersion": "2018-03-01",
+            "name": "[variables('alertName')]",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('microsoft.insights/actionGroups', variables('AGName'))]"
+            ],
+            "properties": {
+                "description": "CPU over 5%",
+                "severity": 2,
+                "enabled": true,
+                "scopes": [
+                    "[resourceId('Microsoft.ContainerService/managedClusters', variables('kubernetesClusterName') )]"
+                ],
+                "evaluationFrequency": "PT1M",
+                "windowSize": "PT5M",
+                "criteria": {
+                    "allOf": [
+                        {
+                            "threshold": 5,
+                            "name": "Metric1",
+                            "metricNamespace": "Microsoft.ContainerService/managedClusters",
+                            "metricName": "node_cpu_usage_percentage",
+                            "operator": "GreaterThan",
+                            "timeAggregation": "Average",
+                            "criterionType": "StaticThresholdCriterion"
+                        }
+                    ],
+                    "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+                },
+                "autoMitigate": true,
+                "targetResourceType": "Microsoft.ContainerService/managedClusters",
+                "targetResourceRegion": "[parameters('location')]",
+                "actions": [
+                    {
+                        "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('AGName'))]",
+                        "webHookProperties": {}
+                    }
+                ]
+            }
+        }
+
+
+
+
+    ],
+    "outputs": {
+
+    }
+}
