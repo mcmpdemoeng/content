@@ -1,17 +1,15 @@
 (function process( /*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
     var apiKey = request.queryParams['apiKey'];
-	
 	var event = request.body.data;
-
 	var HTTPrequest = new sn_ws.RESTMessageV2();
-	HTTPrequest.setEndpoint('<baseUrl>/api/now/v1/table/incident');
+	var baseUrl = request.queryParams['baseurl'];
+	var url = baseUrl + '/api/now/v1/table/incident';
+	
+	HTTPrequest.setEndpoint(url);
 	HTTPrequest.setHttpMethod('POST');
 
-	//Eg. UserName="admin", Password="admin" for this code sample.
-
-	var user = '<user>';
-
-	var password = '<password>';
+	var user = request.queryParams['user'];
+	var password = request.queryParams['password'];
 	//var number = event.data.context.activityLog.properties.trackingId;
 	HTTPrequest.setBasicAuth(user,password);
 	var body = {
