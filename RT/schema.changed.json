@@ -1,0 +1,536 @@
+{
+    "ticket_type": "incident",
+    "schema_value": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "location.street": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "mapped_name": "location.street"
+          }
+        },
+        "location.u_building_id": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "description": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "u_escalatedcount": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "due_date": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "consider_value": "true"
+          }
+        },
+        "caused_by": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "closed_at": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "consider_value": "true"
+          }
+        },
+        "u_qs_opened_by_group": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "mapped_name": "u_opened_by_group"
+          }
+        },
+        "sys_created_on": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "consider_value": "true"
+          }
+        },
+        "close_notes": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "sys_updated_on": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "consider_value": "true"
+          }
+        },
+        "contact_type": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "resolved_by": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "location.city": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "priority": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "company": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "mapped_name": "assignment_group.u_parent"
+          }
+        },
+        "opened_at": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "consider_value": "true"
+          }
+        },
+        "assignment_group": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "u_users_affected_count": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "short_description": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "business_duration": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "consider_value": "true"
+          }
+        },
+        "calendar_duration": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "consider_value": "true"
+          }
+        },
+        "closed_by": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "cmdb_ci": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "location.country": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "work_end": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "consider_value": "true"
+          }
+        },
+        "reopen_count": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "u_affected_user": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "impact": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "number": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "location.u_config_loc": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "mapped_name": "location.u_site_loc_id"
+          }
+        },
+        "state": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "taskslatable_business_pause_duration": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "mapped_name": "u_on_hold_duration"
+          }
+        },
+        "severity": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "u_original_priority": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "resolved_at": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "consider_value": "true"
+          }
+        },
+        "sys_class_name": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "mapped_name": "u_type"
+          }
+        },
+        "subcategory": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "close_code": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "work_start": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "consider_value": "true"
+          }
+        },
+        "u_issue_description": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "correlation_id": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "location.u_region": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "category": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "reassignment_count": {
+          "type": "object",
+          "properties": {
+            "display_value": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "date_format": "%Y-%m-%d %H:%M:%S"
+      }
+    },
+    "snow_cmdb_refresh_url": "dummy",
+    "snow_oneoff_url": "/api/now/table/incident?sysparm_limit=$page_limit&sysparm_offset=$offset&sysparm_query=sys_created_onONLast%20$no_of_days%20days@javascript:gs.daysAgoStart($no_of_days)@javascript:gs.daysAgoEnd(0)&sysparm_display_value=all&sysparm_fields=number%2Cstate%2Csys_updated_on%2Ccaller_id%2Copened_at%2Cu_qs_opened_by_group%2Cshort_description%2Cdescription%2Csys_created_on%2Cassignment_group%2Cdue_date%2Cresolved_at%2Cresolved_by%2Ccontact_type%2Cu_close_code_category%2Cclose_notes%2Cclose_code%2Cclosed_at%2Ccorrelation_id%2Ccompany%2Cseverity%2Cimpact%2Ccaused_by%2Csys_class_name%2Cpriority%2Cu_qs_affected_date%2Cbusiness_duration%2Ccalendar_duration%2Cwork_start%2Cclosed_by%2Creassignment_count%2Creopen_count%2Copened_by%2Ccontact_type%2Ccategory%2Csubcategory%2Cclose_code%2Cassignment_group.company%2Clocation.city%2Clocation.country%2Clocation.street%2Clocation%2Ctaskslatable_business_pause_duration",
+    "snow_15min_refresh_url": "/api/now/table/incident?sysparm_limit=$page_limit&sysparm_offset=$offset&sysparm_query=sys_created_onONLast%20210%20days@javascript:gs.daysAgoStart(210)@javascript:gs.daysAgoEnd(0)^sys_updated_onONLast%20$refresh_interval_hours%20hours@javascript:gs.hoursAgo($refresh_interval_hours)@javascript:gs.hoursAgoEnd(0)&sysparm_display_value=all&sysparm_fields=number%2Cstate%2Csys_updated_on%2Ccaller_id%2Copened_at%2Cu_qs_opened_by_group%2Cshort_description%2Cdescription%2Csys_created_on%2Cassignment_group%2Cdue_date%2Cresolved_at%2Cresolved_by%2Ccontact_type%2Cu_close_code_category%2Cclose_notes%2Cclose_code%2Cclosed_at%2Ccorrelation_id%2Ccompany%2Cseverity%2Cimpact%2Ccaused_by%2Csys_class_name%2Cpriority%2Cu_qs_affected_date%2Cbusiness_duration%2Ccalendar_duration%2Cwork_start%2Cclosed_by%2Creassignment_count%2Creopen_count%2Copened_by%2Ccontact_type%2Ccategory%2Csubcategory%2Cclose_code%2Cassignment_group.company%2Clocation.city%2Clocation.country%2Clocation.street%2Clocation%2Ctaskslatable_business_pause_duration",
+    "snow_data_source_name": "SNOW_INC"
+  }
