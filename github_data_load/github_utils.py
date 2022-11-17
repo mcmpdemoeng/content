@@ -1,0 +1,142 @@
+from github import Github
+import time
+
+
+def close_pull_requests( repoConnection, baseBranch='master' ):
+    """
+        Params:
+            repoConnection ( Required Object ): Object from Github library with all required credentials
+            baseBranch (optional string): Filter
+    """
+    pulls = repoConnection.get_pulls( state='open', sort='created', base=baseBranch )
+    for pull in pulls:
+        pull.edit(state='close')
+
+def verify_github_file_exists( filePath, repoConnection ):
+    """
+    Params:
+        filePath (Required string): Path of the file in the repo
+            Example: atomatic_commit_log.log
+        
+        repoConnection (Required Object): Object from Github library with all required credentials
+    """
+    try:
+
+        content = repoConnection.get_contents(filePath, )
+        return True, { 
+            "sha": content.sha,
+            "content": content.decoded_content.decode("UTF-8")
+        }
+
+    except BaseException as error:
+        return False, {}
+
+
+def create_commit( repoConnection, commitName="Automatic Commit", branch="master", fileToLog="atomatic_commit_log.log" ):
+    """
+        params:
+            repoConnection ( Required Object ): Object from Github library with all required credentials
+
+            commitName ( Optional string ): Default is 'Automatic Commit'
+
+            Branch ( Optional string ): Default is set to 'master'
+
+            fileToLog: (Optional string): filename to write the new content to commit
+    """
+
+    
+    fileExists, fileData  =  verify_github_file_exists( filePath=fileToLog, repoConnection=repoConnection )
+    
+    try:
+
+        if fileExists:
+            newContent  =  fileData["content"] + f"\nAutomatic commit {time.asctime()}"
+            repoConnection.update_file( path=fileToLog, message=commitName, content=newContent, sha=fileData["sha"], branch=branch )
+        
+        else:
+            newContent =  f"\nAutomatic commit {time.asctime()}"
+            repoConnection.create_file( path=fileToLog, message=commitName, content=newContent, branch=branch )
+        
+        return True
+    
+    except BaseException as error:
+
+        return False, str(error)
+
+
+
+def create_pull_request( repoConnection, headBranch, baseBranch='master' ):
+    """
+        - MAKE SURE YOU ALREADY COMMITED SOMETHING IN THE BRANCH BEFORE EXECUTING A PR
+        - make sure this branch exists and has no conflicts at the time of creating the PR
+        Params:
+            repoConnection ( Required Object ): Object from Github library with all required credentials
+            headBranch ( Required string ): branch with the new changes
+            baseBranch ( Optional string): branch to merge, default is set to 'master'
+    """
+  
+    try:
+        
+        pullReqName = f"Automatic PR - {time.asctime()}"
+        repoConnection.create_pull(title=pullReqName, body="some body exmaplee", head=headBranch, base=baseBranch )
+        return True, ""
+        
+    except BaseException as error:
+
+        return False, str(error)
+
+def create_issue( repoConnection, labels=[], log_errors=False ) -> str:
+    """
+        Params:
+            repoConnection ( Required Object ): Object from Github library with all required credentials
+
+            labels (optional): 
+                Example: ['critical', 'Red Thread']
+
+            log_errors (optional bool): Print errors on screen, default is False
+    """
+
+    try: 
+        issueData = repoConnection.create_issue( title="issue creted from python", labels=labels )
+        return issueData.number
+    except BaseException as error:
+
+        if log_errors:
+            print(error)
+
+        return None
+
+
+def update_issue(repoConnection, issueNumber):
+    """
+        Params:
+            repoConnection ( Required Object ): Object from Github library with all required credentials
+    """
+    try:
+
+        issue = repoConnection.get_issue( number=issueNumber )
+        comment = f"Automated comment - {time.asctime()}"
+        issue.create_comment( comment )
+        return True, ""
+
+    except BaseException as error:
+
+        return False, str(error)
+
+
+
+def create_close_issue(repoConnection, labels = []):
+    """
+        Params:
+            repoConnection ( Required Object ): Object from Github library with all required credentials
+    """
+    try:
+
+        issueNumber = create_issue( repoConnection=repoConnection, labels=labels )
+        issue = repoConnection.get_issue( number=issueNumber )
+        issue.edit( state='closed' )
+        return True, ""
+
+    except BaseException as error:
+
+        return False, str(error)
