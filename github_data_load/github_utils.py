@@ -11,7 +11,22 @@ def close_pull_requests( repoConnection, baseBranch='master' ):
     pulls = repoConnection.get_pulls( state='open', sort='created', base=baseBranch )
     for pull in pulls:
         pull.edit(state='close')
+        
 
+
+def merge_pull_request( repoConnection, baseBranch='master' ):
+    """
+        Params:
+            repoConnection ( Required Object ): Object from Github library with all required credentials
+            baseBranch (optional string): Filter
+    """
+    pulls = repoConnection.get_pulls( state='open', sort='created', base=baseBranch )
+    for pull in pulls:
+        #pull.edit(state='close')
+        pull.merge("Automatic merge")
+        
+
+    
 def verify_github_file_exists( filePath, repoConnection ):
     """
     Params:
@@ -57,7 +72,7 @@ def create_commit( repoConnection, commitName="Automatic Commit", branch="master
             newContent =  f"\nAutomatic commit {time.asctime()}"
             repoConnection.create_file( path=fileToLog, message=commitName, content=newContent, branch=branch )
         
-        return True
+        return True, ""
     
     except BaseException as error:
 
@@ -65,7 +80,7 @@ def create_commit( repoConnection, commitName="Automatic Commit", branch="master
 
 
 
-def create_pull_request( repoConnection, headBranch, baseBranch='master' ):
+def create_pull_request( repoConnection, headBranch, baseBranch='master', body="Body exmaple" ):
     """
         - MAKE SURE YOU ALREADY COMMITED SOMETHING IN THE BRANCH BEFORE EXECUTING A PR
         - make sure this branch exists and has no conflicts at the time of creating the PR
@@ -78,14 +93,14 @@ def create_pull_request( repoConnection, headBranch, baseBranch='master' ):
     try:
         
         pullReqName = f"Automatic PR - {time.asctime()}"
-        repoConnection.create_pull(title=pullReqName, body="some body exmaplee", head=headBranch, base=baseBranch )
+        repoConnection.create_pull(title=pullReqName, body=body, head=headBranch, base=baseBranch )
         return True, ""
         
     except BaseException as error:
 
         return False, str(error)
 
-def create_issue( repoConnection, labels=[], log_errors=False ) -> str:
+def create_issue( repoConnection, labels=[], title="issue creted from python", log_errors=False ) -> str:
     """
         Params:
             repoConnection ( Required Object ): Object from Github library with all required credentials
@@ -97,7 +112,7 @@ def create_issue( repoConnection, labels=[], log_errors=False ) -> str:
     """
 
     try: 
-        issueData = repoConnection.create_issue( title="issue creted from python", labels=labels )
+        issueData = repoConnection.create_issue( title=title, labels=labels )
         return issueData.number
     except BaseException as error:
 
@@ -140,3 +155,13 @@ def create_close_issue(repoConnection, labels = []):
     except BaseException as error:
 
         return False, str(error)
+
+def close_issues(repoConnection, Labelfilters=["documentation"] ):
+    issues = repoConnection.get_issues()
+    for issue in issues:
+        for label in issue.labels:
+            if label.name in Labelfilters :
+                issue.edit( state='closed' )
+
+
+    
