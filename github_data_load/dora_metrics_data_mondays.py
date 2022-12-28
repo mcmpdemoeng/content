@@ -48,15 +48,11 @@ def main():
 
 
 
-def post_main():
-    setup =  parser()
-    repoConnection = Github( setup["gitHubToken"] ).get_repo( setup["repo"] )
-    merge_pull_request(repoConnection, 'release-2023')
-    close_issues(repoConnection=repoConnection, Labelfilters=["User Story", "Epic"])
+
 
 
 
 if __name__ == "__main__":
     main()
-    input("press enter to continue")
-    post_main()
+    
+   
