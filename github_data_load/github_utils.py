@@ -100,7 +100,7 @@ def create_pull_request( repoConnection, headBranch, baseBranch='master', body="
 
         return False, str(error)
 
-def create_issue( repoConnection, labels=[], title="issue creted from python", log_errors=False ) -> str:
+def create_issue( repoConnection, labels=[], title="issue creted from python", log_errors=False, description="Default Description" ) -> str:
     """
         Params:
             repoConnection ( Required Object ): Object from Github library with all required credentials
@@ -112,7 +112,7 @@ def create_issue( repoConnection, labels=[], title="issue creted from python", l
     """
 
     try: 
-        issueData = repoConnection.create_issue( title=title, labels=labels )
+        issueData = repoConnection.create_issue( title=title, labels=labels, body=description )
         return issueData.number
     except BaseException as error:
 

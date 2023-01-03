@@ -25,12 +25,13 @@ def main():
     if not issueNumber:
         raise Exception("Unable to create issue")
 
-    #TODO: we need to get the real epic link
+    
     epicLink = f"https://github.com/{setup['repo']}/issues/{issueNumber}" 
 
     # Create Issue for the Epic
-    titleName = f"User story {date} Epic: {epicLink}"
-    storyIssueNumber = create_issue( repoConnection, labels=["User Story"], title=titleName, log_errors=True )
+    titleName = f"User story {date}"
+    description = f"Epic: {epicLink}"
+    storyIssueNumber = create_issue( repoConnection, labels=["User Story"], title=titleName, description=description,log_errors=True )
     if not storyIssueNumber:
         raise Exception("Unable to create issue")
 
