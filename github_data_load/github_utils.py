@@ -14,17 +14,24 @@ def close_pull_requests( repoConnection, baseBranch='master' ):
         
 
 
-def merge_pull_request( repoConnection, baseBranch='master' ):
+def merge_pull_request( repoConnection, baseBranch='master', headBranch=None ):
     """
         Params:
             repoConnection ( Required Object ): Object from Github library with all required credentials
             baseBranch (optional string): Filter
     """
     pulls = repoConnection.get_pulls( state='open', sort='created', base=baseBranch )
+    
     for pull in pulls:
-        #pull.edit(state='close')
-        pull.merge("Automatic merge")
+
+        if headBranch and headBranch in pull.head.label:
+            pull.merge("Automatic merge")
+
+        elif not headBranch:
+            pull.merge("Automatic merge")
         
+
+
 
     
 def verify_github_file_exists( filePath, repoConnection ):

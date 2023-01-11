@@ -15,7 +15,7 @@ def parser( ) -> dict:
 def main():
     setup =  parser()
     repoConnection = Github( setup["gitHubToken"] ).get_repo( setup["repo"] )
-    merge_pull_request(repoConnection, 'release-2023')
+    merge_pull_request(repoConnection, 'master', headBranch='release-2023')
     close_issues(repoConnection=repoConnection, Labelfilters=["User Story", "Epic"])
 
 

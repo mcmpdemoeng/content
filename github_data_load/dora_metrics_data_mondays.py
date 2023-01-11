@@ -30,20 +30,20 @@ def main():
 
     # Create Issue for the Epic
     titleName = f"User story {date}"
-    description = f"Epic: {epicLink}"
+    description = f"{epicLink}"
     storyIssueNumber = create_issue( repoConnection, labels=["User Story"], title=titleName, description=description,log_errors=True )
     if not storyIssueNumber:
         raise Exception("Unable to create issue")
 
     #Commit something to 'master'
-    _, errorMessage = create_commit( repoConnection, "Autmatic commit", "master"  )
+    _, errorMessage = create_commit( repoConnection, "Autmatic commit from jenkins dora metrics", "release-2023"  )
     if errorMessage:
         print(errorMessage)
         return Exception("Unable to commit changes")
 
-    #create PR from 'master' to 'release-2023'
-    bodyDescription = f"User Story: https://github.com/{setup['repo']}/issues/{storyIssueNumber}"
-    create_pull_request( repoConnection, "master", "release-2023", body=bodyDescription )
+    #create PR from 'release-2023' to 'master'
+    bodyDescription = f"https://github.com/{setup['repo']}/issues/{storyIssueNumber}"
+    create_pull_request( repoConnection, headBranch="release-2023", baseBranch="master", body=bodyDescription )
 
 
 
