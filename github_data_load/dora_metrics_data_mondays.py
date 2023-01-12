@@ -36,7 +36,7 @@ def main():
         raise Exception("Unable to create issue")
 
     #Commit something to 'master'
-    _, errorMessage = create_commit( repoConnection, "Autmatic commit from jenkins dora metrics", "release-2023"  )
+    _, errorMessage = create_commit( repoConnection, "Autmatic commit from jenkins dora metrics", "release-2023", fileToLog="dora_metrics_log.log"  )
     if errorMessage:
         print(errorMessage)
         return Exception("Unable to commit changes")
