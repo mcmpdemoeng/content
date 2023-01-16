@@ -1,6 +1,6 @@
 from github import Github
 import time
-
+import hashlib
 
 def close_pull_requests( repoConnection, baseBranch='master' ):
     """
@@ -74,11 +74,13 @@ def create_commit( repoConnection, commitName="Automatic Commit", branch="master
         if fileExists:
             newContent  =  fileData["content"] + newContent
             repoConnection.update_file( path=fileToLog, message=commitName, content=newContent, sha=fileData["sha"], branch=branch )
-        
+
         else:
             newContent =  f"\nAutomatic commit {time.asctime()}"
-            repoConnection.create_file( path=fileToLog, message=commitName,  content=newContent, branch=branch )
-        
+            binaryContent = newContent.encode()
+            hashData = hashlib.sha1(binaryContent)
+            repoConnection.create_file( path=fileToLog, message=commitName, sha=hashData, content=newContent, branch=branch )
+
         return True, ""
     
     except BaseException as error:
