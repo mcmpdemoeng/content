@@ -70,15 +70,13 @@ def create_commit( repoConnection, commitName="Automatic Commit", branch="master
     fileExists, fileData  =  verify_github_file_exists( filePath=fileToLog, repoConnection=repoConnection )
     
     try:
+        newContent =  f"\nAutomatic commit {time.asctime()}"
         
         if fileExists:
-            newContent  =  fileData["content"] + newContent
             repoConnection.update_file( path=fileToLog, message=commitName, content=newContent, sha=fileData["sha"], branch=branch )
 
         else:
-
-            newContent =  f"\nAutomatic commit {time.asctime()}"
-           
+            
             repoConnection.create_file( path=fileToLog, message=commitName,  content=newContent, branch=branch )
 
         return True, ""
