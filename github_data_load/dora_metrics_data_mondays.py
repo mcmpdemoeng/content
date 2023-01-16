@@ -43,7 +43,7 @@ def main():
 
     #create PR from 'release-2023' to 'master'
     bodyDescription = f"https://github.com/{setup['repo']}/issues/{storyIssueNumber}"
-    create_pull_request( repoConnection, headBranch="release-2023", baseBranch="master", body=bodyDescription )
+    create_pull_request( repoConnection, headBranch="master", baseBranch="release-2023", body=bodyDescription )
 
 
 
