@@ -54,7 +54,7 @@ def verify_github_file_exists( filePath, repoConnection ):
         return False, {}
 
 
-def create_commit( repoConnection, commitName="Automatic Commit", branch="master", fileToLog="atomatic_commit_log.log" ):
+def create_commit( repoConnection, commitName="Automatic Commit", branch="master", fileToLog="atomatic_commit_log.log", logErrors=False ):
     """
         params:
             repoConnection ( Required Object ): Object from Github library with all required credentials
@@ -70,9 +70,9 @@ def create_commit( repoConnection, commitName="Automatic Commit", branch="master
     fileExists, fileData  =  verify_github_file_exists( filePath=fileToLog, repoConnection=repoConnection )
     
     try:
-        newContent  =  fileData["content"] + f"\nAutomatic commit {time.asctime()}"
+        
         if fileExists:
-            
+            newContent  =  fileData["content"] + newContent
             repoConnection.update_file( path=fileToLog, message=commitName, content=newContent, sha=fileData["sha"], branch=branch )
         
         else:
@@ -82,12 +82,13 @@ def create_commit( repoConnection, commitName="Automatic Commit", branch="master
         return True, ""
     
     except BaseException as error:
-
+        if logErrors:
+            print(error)
         return False, str(error)
 
 
 
-def create_pull_request( repoConnection, headBranch, baseBranch='master', body="Body exmaple" ):
+def create_pull_request( repoConnection, headBranch, baseBranch='master', body="Body exmaple", logErrors=False ):
     """
         - MAKE SURE YOU ALREADY COMMITED SOMETHING IN THE BRANCH BEFORE EXECUTING A PR
         - make sure this branch exists and has no conflicts at the time of creating the PR
@@ -104,7 +105,8 @@ def create_pull_request( repoConnection, headBranch, baseBranch='master', body="
         return True, ""
         
     except BaseException as error:
-
+        if logErrors:
+            print(error)
         return False, str(error)
 
 def create_issue( repoConnection, labels=[], title="issue creted from python", log_errors=False, description="Default Description" ) -> str:

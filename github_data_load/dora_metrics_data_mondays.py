@@ -25,7 +25,7 @@ def main():
     if not issueNumber:
         raise Exception("Unable to create issue")
 
-    
+
     epicLink = f"https://github.com/{setup['repo']}/issues/{issueNumber}" 
 
     # Create Issue for the Epic
@@ -36,17 +36,14 @@ def main():
         raise Exception("Unable to create issue")
 
     #Commit something to 'master'
-    _, errorMessage = create_commit( repoConnection, "Autmatic commit from jenkins dora metrics", "release-2023", fileToLog="dora_metrics_log.log"  )
+    _, errorMessage = create_commit( repoConnection, "Autmatic commit from jenkins dora metrics", "release-2023", fileToLog="dora_metrics_log.log", logErrors=True  )
     if errorMessage:
-        print(errorMessage)
-        return Exception("Unable to commit changes")
+        
+        exit(1)
 
     #create PR from 'release-2023' to 'master'
     bodyDescription = f"https://github.com/{setup['repo']}/issues/{storyIssueNumber}"
-    create_pull_request( repoConnection, headBranch="release-2023", baseBranch="master", body=bodyDescription )
-
-
-
+    create_pull_request( repoConnection, headBranch="release-2023", baseBranch="master", body=bodyDescription, logErrors=True )
 
 
 
