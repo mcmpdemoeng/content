@@ -77,7 +77,7 @@ def create_commit( repoConnection, commitName="Automatic Commit", branch="master
         
         else:
             newContent =  f"\nAutomatic commit {time.asctime()}"
-            repoConnection.create_file( path=fileToLog, message=commitName, sha=fileData["sha"], content=newContent, branch=branch )
+            repoConnection.create_file( path=fileToLog, message=commitName,  content=newContent, branch=branch )
         
         return True, ""
     
