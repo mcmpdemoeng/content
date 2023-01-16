@@ -1,6 +1,6 @@
 from github import Github
 import time
-import hashlib
+
 
 def close_pull_requests( repoConnection, baseBranch='master' ):
     """
@@ -44,8 +44,8 @@ def verify_github_file_exists( filePath, repoConnection ):
     """
     try:
 
-        content = repoConnection.get_contents(filePath, )
-        return True, { 
+        content = repoConnection.get_contents( filePath )
+        return True, {
             "sha": content.sha,
             "content": content.decoded_content.decode("UTF-8")
         }
@@ -76,10 +76,10 @@ def create_commit( repoConnection, commitName="Automatic Commit", branch="master
             repoConnection.update_file( path=fileToLog, message=commitName, content=newContent, sha=fileData["sha"], branch=branch )
 
         else:
+
             newContent =  f"\nAutomatic commit {time.asctime()}"
-            binaryContent = newContent.encode()
-            hashData = hashlib.sha1(binaryContent)
-            repoConnection.create_file( path=fileToLog, message=commitName, sha=hashData, content=newContent, branch=branch )
+           
+            repoConnection.create_file( path=fileToLog, message=commitName,  content=newContent, branch=branch )
 
         return True, ""
     
