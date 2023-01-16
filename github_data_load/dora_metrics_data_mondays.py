@@ -30,7 +30,7 @@ def main():
 
     # Create Issue for the Epic
     titleName = f"User story {date}"
-    description = f"{epicLink}"
+    description = f"Epic: {epicLink}"
     storyIssueNumber = create_issue( repoConnection, labels=["User Story"], title=titleName, description=description,log_errors=True )
     if not storyIssueNumber:
         raise Exception("Unable to create issue")
