@@ -18,7 +18,7 @@ def main():
     repoConnection = Github( setup["gitHubToken"] ).get_repo( setup["repo"] )
     releaseNumber = time.strftime("%w") #Using number of the week as release counter
     releaseBranchName = f"release-2023-{releaseNumber}"
-    merge_pull_request( repoConnection, 'master', headBranch=releaseBranchName )
+    create_branch( repoConnection=repoConnection, newBranchName=releaseBranchName )
     close_issues(repoConnection=repoConnection, Labelfilters=["User Story", "Epic"])
 
 
