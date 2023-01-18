@@ -20,9 +20,8 @@ def main( ):
 
     releaseNumber = time.strftime("%w") #Using number of the week as release counter
     releaseBranchName = f"release-2023-{releaseNumber}"
-    
-    create_pull_request( repoConnection, headBranch=releaseBranchName, baseBranch="master", body="Release merge", logErrors=True )
     merge_pull_request( repoConnection=repoConnection, baseBranch=releaseBranchName, headBranch='automation-branch' )
+    create_pull_request( repoConnection, headBranch=releaseBranchName, baseBranch="master", body="Release merge", logErrors=True )
     
 
 if __name__ == "__main__":
