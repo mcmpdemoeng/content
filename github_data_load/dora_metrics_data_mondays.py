@@ -38,15 +38,15 @@ def main():
     #Commit something to 'master'
     _, errorMessage = create_commit( repoConnection, "Autmatic commit from jenkins dora metrics", "automation-branch", fileToLog="dora_metrics_log.log", logErrors=True  )
     if errorMessage:
-        
+
         exit(1)
 
+    releaseNumber = time.strftime("%w") #Using number of the week as release counter
+    releaseBranchName = f"release-2023-{releaseNumber}"
+    create_branch( repoConnection=repoConnection, newBranchName=releaseBranchName )
     #create PR from 'release-2023' to 'master'
     bodyDescription = f"https://github.com/{setup['repo']}/issues/{storyIssueNumber}"
-    create_pull_request( repoConnection, headBranch="automation-branch", baseBranch="master", body=bodyDescription, logErrors=True )
-
-
-
+    create_pull_request( repoConnection, headBranch="automation-branch", baseBranch=releaseBranchName, body=bodyDescription, logErrors=True )
 
 
 

@@ -1,5 +1,6 @@
 from github_utils import *
 import argparse
+import time
 
 def parser( ) -> dict:
     parser = argparse.ArgumentParser()
@@ -12,19 +13,14 @@ def parser( ) -> dict:
     }
 
 
-
-
-def main( ):
-    setup = parser()
+def main():
+    setup =  parser()
     repoConnection = Github( setup["gitHubToken"] ).get_repo( setup["repo"] )
-
     releaseNumber = time.strftime("%w") #Using number of the week as release counter
     releaseBranchName = f"release-2023-{releaseNumber}"
-    
-    create_pull_request( repoConnection, headBranch=releaseBranchName, baseBranch="master", body="Release merge", logErrors=True )
-    merge_pull_request( repoConnection=repoConnection, baseBranch=releaseBranchName, headBranch='automation-branch' )
-    
+    merge_pull_request( repoConnection, 'master', headBranch=releaseBranchName )
+    close_issues(repoConnection=repoConnection, Labelfilters=["User Story", "Epic"])
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":    
     main()

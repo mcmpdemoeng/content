@@ -32,9 +32,34 @@ def merge_pull_request( repoConnection, baseBranch='master', headBranch=None ):
         
 
 
+def verify_branch_exists(repoConnection, branchToverify: str, logErrors=False):
+    try:
+            
+        branches = repoConnection.get_branches()
+        for branch  in branches:
+            if branch.name == branchToverify:
+                return True
+        return False
+    except BaseException as error:
+        if logErrors:
+            print(f"Error: {error} ")
+        return False
+
+
+def create_branch(repoConnection, newBranchName):
+    try:
+        source_branch = 'master'
+        sb = repoConnection.get_branch(source_branch)
+        repoConnection.create_git_ref(ref='refs/heads/' + newBranchName, sha=sb.commit.sha)
+        return True
+
+    except BaseException as error:
+
+        return False
+
 
     
-def verify_github_file_exists( filePath, repoConnection ):
+def verify_github_file_exists( filePath, repoConnection, branch='master' ):
     """
     Params:
         filePath (Required string): Path of the file in the repo
@@ -44,7 +69,7 @@ def verify_github_file_exists( filePath, repoConnection ):
     """
     try:
 
-        content = repoConnection.get_contents( filePath )
+        content = repoConnection.get_contents( filePath, ref=branch )
         return True, {
             "sha": content.sha,
             "content": content.decoded_content.decode("UTF-8")
@@ -67,11 +92,11 @@ def create_commit( repoConnection, commitName="Automatic Commit", branch="master
     """
 
     
-    fileExists, fileData  =  verify_github_file_exists( filePath=fileToLog, repoConnection=repoConnection )
+    fileExists, fileData  =  verify_github_file_exists( filePath=fileToLog, repoConnection=repoConnection, branch=branch )
     
     try:
         newContent =  f"\nAutomatic commit {time.asctime()}"
-        
+
         if fileExists:
             repoConnection.update_file( path=fileToLog, message=commitName, content=newContent, sha=fileData["sha"], branch=branch )
 
@@ -171,6 +196,3 @@ def close_issues(repoConnection, Labelfilters=["documentation"] ):
         for label in issue.labels:
             if label.name in Labelfilters :
                 issue.edit( state='closed' )
-
-
-    
