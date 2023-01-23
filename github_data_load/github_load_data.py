@@ -39,6 +39,10 @@ def load_repo( repoName, gitToken="" )-> dict:
   
     issueNumber = create_issue( repoConnection=repoConnection )
     resultsList.append( { "create_issue" : issueNumber } )
+
+    #Pause for 2 min to avoid the api to restrict the access
+    time.sleep(120)
+
     if issueNumber:
         resultsList.append({ "update_issue" : update_issue( repoConnection=repoConnection, issueNumber=issueNumber ) }) 
     resultsList.append( { "create_close_issue" : create_close_issue( repoConnection=repoConnection ) })
@@ -72,7 +76,7 @@ def showResults( repoResults ):
     for results in repoResults:
         title =f'!!!!!!!!!{results["repository"]}!!!!!!!!!!!!!!'
         print( title )
-        #print( json.dumps( results, indent=4 ) )
+        
         print( results )
 
 
@@ -84,7 +88,9 @@ def main():
     repoResults  =  []
 
     for repo in params["repoList"]:
+
        repoResults.append( load_repo(  repoName=repo , gitToken=params["gitHubToken"]  ) )
+       time.sleep(3600)
 
     showResults( repoResults )
 
