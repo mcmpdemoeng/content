@@ -16,8 +16,8 @@ def parser( ) -> dict:
 def main():
     setup =  parser()
     repoConnection = Github( setup["gitHubToken"] ).get_repo( setup["repo"] )
-    releaseNumber = time.strftime("%w") #Using number of the week as release counter
-    releaseBranchName = f"release-2023-{releaseNumber}"
+    releaseNumber = time.strftime("%Y.%m.%d") #Using number of the week as release counter
+    releaseBranchName = f"release-{releaseNumber}"
     create_branch( repoConnection=repoConnection, newBranchName=releaseBranchName )
     close_issues(repoConnection=repoConnection, Labelfilters=["User Story", "Epic"])
 

@@ -35,7 +35,7 @@ def main():
     if not storyIssueNumber:
         raise Exception("Unable to create issue")
 
-    #Commit something to 'master'
+    #Commit something to 'automation-branch'
     _, errorMessage = create_commit( repoConnection, "Autmatic commit from jenkins dora metrics", "automation-branch", fileToLog="dora_metrics_log.log", logErrors=True  )
     if errorMessage:
 

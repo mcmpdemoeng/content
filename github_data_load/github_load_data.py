@@ -41,7 +41,8 @@ def load_repo( repoName, gitToken="" )-> dict:
     resultsList.append( { "create_issue" : issueNumber } )
 
     #Pause for 2 min to avoid the api to restrict the access
-    time.sleep(120)
+    print("WAITING 2min to continue")
+    time.sleep(120.0)
 
     if issueNumber:
         resultsList.append({ "update_issue" : update_issue( repoConnection=repoConnection, issueNumber=issueNumber ) }) 
@@ -90,7 +91,8 @@ def main():
     for repo in params["repoList"]:
 
        repoResults.append( load_repo(  repoName=repo , gitToken=params["gitHubToken"]  ) )
-       time.sleep(3600)
+       print("WAITING 5min to continue")
+       time.sleep(3600.0)
 
     showResults( repoResults )
 
